@@ -5,6 +5,18 @@
 
 [Google Java Style]: https://google.github.io/styleguide/javaguide.html
 
+## About this fork
+This fork adds configurable max line length support.
+* Added configure max line length support to formatter core.
+* Added configure max line length support to IDEA plugin.
+
+## Using this fork
+### From release page
+* Download idea plugin zip arhive from the [release page](https://github.com/kuzyanov/google-java-format/releases), available ander this repository.
+* Install plugin to IDEA: Settings > Plugins > Install plugin from disk.
+* Select download zip archive, install it and restart your IDE.
+* Plugin settings will be available at: Settings > Other Settings > google-java-format. 
+
 ## Using the formatter
 
 ### from the command-line
