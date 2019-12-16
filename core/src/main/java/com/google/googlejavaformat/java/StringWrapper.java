@@ -62,8 +62,8 @@ import org.openjdk.tools.javac.util.Position;
 /** Wraps string literals that exceed the column limit. */
 public final class StringWrapper {
   /** Reflows long string literals in the given Java source code. */
-  public static String wrap(String input, Formatter formatter) throws FormatterException {
-    return StringWrapper.wrap(Formatter.MAX_LINE_LENGTH, input, formatter);
+  public static String wrap(String input, Formatter formatter, JavaFormatterOptions options) throws FormatterException {
+    return StringWrapper.wrap(options.maxLineLength(), input, formatter);
   }
 
   /**

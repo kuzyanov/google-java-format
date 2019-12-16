@@ -26,12 +26,10 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import java.awt.Insets;
+import java.text.NumberFormat;
 import javax.annotation.Nullable;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
+
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +39,7 @@ class GoogleJavaFormatConfigurable extends BaseConfigurable implements Searchabl
   private JPanel panel;
   private JCheckBox enable;
   private JComboBox styleComboBox;
+  private JFormattedTextField maxLineLengthField;
 
   public GoogleJavaFormatConfigurable(Project project) {
     this.project = project;
@@ -81,6 +80,7 @@ class GoogleJavaFormatConfigurable extends BaseConfigurable implements Searchabl
     GoogleJavaFormatSettings settings = GoogleJavaFormatSettings.getInstance(project);
     settings.setEnabled(enable.isSelected() ? EnabledState.ENABLED : getDisabledState());
     settings.setStyle(((UiFormatterStyle) styleComboBox.getSelectedItem()).convert());
+    settings.setMaxLineLength(getMaxLengthFieldValue());
   }
 
   private EnabledState getDisabledState() {
@@ -95,13 +95,15 @@ class GoogleJavaFormatConfigurable extends BaseConfigurable implements Searchabl
     GoogleJavaFormatSettings settings = GoogleJavaFormatSettings.getInstance(project);
     enable.setSelected(settings.isEnabled());
     styleComboBox.setSelectedItem(UiFormatterStyle.convert(settings.getStyle()));
+    maxLineLengthField.setText(String.valueOf(settings.getMaxLineLength()));
   }
 
   @Override
   public boolean isModified() {
     GoogleJavaFormatSettings settings = GoogleJavaFormatSettings.getInstance(project);
     return enable.isSelected() != settings.isEnabled()
-        || !styleComboBox.getSelectedItem().equals(UiFormatterStyle.convert(settings.getStyle()));
+        || !styleComboBox.getSelectedItem().equals(UiFormatterStyle.convert(settings.getStyle()))
+        || getMaxLengthFieldValue() != settings.getMaxLineLength();
   }
 
   @Override
@@ -109,6 +111,11 @@ class GoogleJavaFormatConfigurable extends BaseConfigurable implements Searchabl
 
   private void createUIComponents() {
     styleComboBox = new ComboBox<>(UiFormatterStyle.values());
+    maxLineLengthField = new JFormattedTextField(NumberFormat.getIntegerInstance());
+  }
+
+  private Integer getMaxLengthFieldValue() {
+    return Integer.parseInt(maxLineLengthField.getText());
   }
 
   {

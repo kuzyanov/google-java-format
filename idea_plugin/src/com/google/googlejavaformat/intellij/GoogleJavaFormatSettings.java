@@ -23,6 +23,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 @State(
     name = "GoogleJavaFormatSettings",
@@ -70,6 +71,14 @@ class GoogleJavaFormatSettings implements PersistentStateComponent<GoogleJavaFor
     state.style = style;
   }
 
+  int getMaxLineLength() {
+    return state.maxLineLength;
+  }
+
+  void setMaxLineLength(Integer maxLineLength) {
+    state.setMaxLineLength(maxLineLength);
+  }
+
   enum EnabledState {
     UNKNOWN,
     ENABLED,
@@ -80,6 +89,7 @@ class GoogleJavaFormatSettings implements PersistentStateComponent<GoogleJavaFor
 
     private EnabledState enabled = EnabledState.UNKNOWN;
     public JavaFormatterOptions.Style style = JavaFormatterOptions.Style.GOOGLE;
+    private int maxLineLength = JavaFormatterOptions.DEFAULT_MAX_LINE_LENGTH;
 
     // enabled used to be a boolean so we use bean property methods for backwards compatibility
     public void setEnabled(@Nullable String enabledStr) {
@@ -101,6 +111,14 @@ class GoogleJavaFormatSettings implements PersistentStateComponent<GoogleJavaFor
         default:
           return null;
       }
+    }
+
+    public int getMaxLineLength() {
+      return maxLineLength;
+    }
+
+    public void setMaxLineLength(Integer maxLineLength) {
+      this.maxLineLength = Optional.ofNullable(maxLineLength).orElse(JavaFormatterOptions.DEFAULT_MAX_LINE_LENGTH);
     }
   }
 }

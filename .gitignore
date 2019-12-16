@@ -1,6 +1,7 @@
 .idea/
 *.ims
 *.iml
+**/.gradle
 
 .classpath
 .project
@@ -12,4 +13,5 @@ target/
 
 bin/
 out/
+idea_plugin/build
 eclipse_plugin/lib/

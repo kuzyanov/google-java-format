@@ -29,6 +29,8 @@ import com.google.errorprone.annotations.Immutable;
 @Immutable
 public class JavaFormatterOptions {
 
+  public static final int DEFAULT_MAX_LINE_LENGTH = 100;
+
   public enum Style {
     /** The default Google Java Style configuration. */
     GOOGLE(1),
@@ -49,10 +51,12 @@ public class JavaFormatterOptions {
 
   private final Style style;
   private final boolean formatJavadoc;
+  private final int maxLineLength;
 
-  private JavaFormatterOptions(Style style, boolean formatJavadoc) {
+  private JavaFormatterOptions(Style style, boolean formatJavadoc, int maxLineLength) {
     this.style = style;
     this.formatJavadoc = formatJavadoc;
+    this.maxLineLength = maxLineLength;
   }
 
   /** Returns the multiplier for the unit of indent. */
@@ -69,6 +73,11 @@ public class JavaFormatterOptions {
     return style;
   }
 
+  /** Returns the max line length. */
+  public int maxLineLength() {
+    return maxLineLength;
+  }
+
   /** Returns the default formatting options. */
   public static JavaFormatterOptions defaultOptions() {
     return builder().build();
@@ -83,6 +92,7 @@ public class JavaFormatterOptions {
   public static class Builder {
     private Style style = Style.GOOGLE;
     private boolean formatJavadoc = true;
+    private int maxLineLength = DEFAULT_MAX_LINE_LENGTH;
 
     private Builder() {}
 
@@ -96,8 +106,13 @@ public class JavaFormatterOptions {
       return this;
     }
 
+    public Builder maxLineLength(int maxLineLength) {
+      this.maxLineLength = maxLineLength;
+      return this;
+    }
+
     public JavaFormatterOptions build() {
-      return new JavaFormatterOptions(style, formatJavadoc);
+      return new JavaFormatterOptions(style, formatJavadoc, maxLineLength);
     }
   }
 }

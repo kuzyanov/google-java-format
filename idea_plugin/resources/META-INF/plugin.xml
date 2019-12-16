@@ -12,6 +12,8 @@
 
   <change-notes><![CDATA[
     <dl>
+      <dt>1.8-SNAPSHOT.0.3</dt>
+      <dd>Configurable max line length.</dd>
       <dt>1.7.0.3</dt>
       <dd>Fixed the plugin on 2019.3 IDEs.</dd>
       <dt>1.7.0.2</dt>
