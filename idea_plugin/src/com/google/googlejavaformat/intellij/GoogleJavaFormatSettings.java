@@ -89,7 +89,7 @@ class GoogleJavaFormatSettings implements PersistentStateComponent<GoogleJavaFor
 
     private EnabledState enabled = EnabledState.UNKNOWN;
     public JavaFormatterOptions.Style style = JavaFormatterOptions.Style.GOOGLE;
-    private int maxLineLength = JavaFormatterOptions.DEFAULT_MAX_LINE_LENGTH;
+    public int maxLineLength = JavaFormatterOptions.DEFAULT_MAX_LINE_LENGTH;
 
     // enabled used to be a boolean so we use bean property methods for backwards compatibility
     public void setEnabled(@Nullable String enabledStr) {
