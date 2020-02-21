@@ -39,6 +39,7 @@ import com.google.googlejavaformat.java.javadoc.Token.Type;
  * are we inside?"
  */
 final class JavadocWriter {
+  private final int maxLineLength;
   private final int blockIndent;
   private final StringBuilder output = new StringBuilder();
   /**
@@ -59,7 +60,8 @@ final class JavadocWriter {
   private int indentForMoeEndStripComment;
   private boolean wroteAnythingSignificant;
 
-  JavadocWriter(int blockIndent) {
+  JavadocWriter(int maxLineLength, int blockIndent) {
+    this.maxLineLength = maxLineLength;
     this.blockIndent = blockIndent;
   }
 
@@ -373,7 +375,7 @@ final class JavadocWriter {
     appendSpaces(blockIndent + 1);
     output.append("*");
     appendSpaces(1);
-    remainingOnLine = JavadocFormatter.MAX_LINE_LENGTH - blockIndent - 3;
+    remainingOnLine = maxLineLength - blockIndent - 3;
     if (autoIndent == AUTO_INDENT) {
       appendSpaces(innerIndent());
       remainingOnLine -= innerIndent();

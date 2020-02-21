@@ -44,7 +44,7 @@ public final class JavaCommentsHelper implements CommentsHelper {
     }
     String text = tok.getOriginalText();
     if (tok.isJavadocComment() && options.formatJavadoc()) {
-      text = JavadocFormatter.formatJavadoc(text, column0);
+      text = JavadocFormatter.formatJavadoc(text, options.maxLineLength(), column0);
     }
     List<String> lines = new ArrayList<>();
     Iterator<String> it = Newlines.lineIterator(text);
