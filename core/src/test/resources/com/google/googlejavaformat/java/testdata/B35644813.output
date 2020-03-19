@@ -1,6 +1,9 @@
 class B35644813 {
   {
-    return foo____________.bar__________().baz____________().stream()
+    return foo____________
+        .bar__________()
+        .baz____________()
+        .stream()
         .map(Baz::getId)
         .collect(toList());
   }

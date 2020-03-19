@@ -75,6 +75,40 @@ public final class FormatterTest {
   }
 
   @Test
+  public void testFormatWithNoBreaks() throws Exception {
+    String input = Joiner.on("\n")
+        .join(
+            "class A{void b(){while(true){collection.stream()",
+            "              .filter(Objects.nonNull)",
+            "              .collect(Collectors.toMap());}}}");
+    String expectedOutput =
+        Joiner.on("\n")
+            .join(
+                "class A {",
+                "    void b() {",
+                "        while (true) {",
+                "            collection.stream()",
+                "                    .filter(Objects.nonNull)",
+                "                    .collect(Collectors.toMap());",
+                "        }",
+                "    }",
+                "}",
+                "");
+
+    Path tmpdir = testFolder.newFolder().toPath();
+    Path path = tmpdir.resolve("A.java");
+    Files.write(path, input.getBytes(StandardCharsets.UTF_8));
+
+    StringWriter out = new StringWriter();
+    StringWriter err = new StringWriter();
+
+    Main main = new Main(new PrintWriter(out, true), new PrintWriter(err, true), System.in);
+    String[] args = {"--aosp", path.toString()};
+    assertThat(main.format(args)).isEqualTo(0);
+    assertThat(out.toString()).isEqualTo(expectedOutput);
+  }
+
+  @Test
   public void testFormatNonJavaFiles() throws Exception {
     StringWriter out = new StringWriter();
     StringWriter err = new StringWriter();

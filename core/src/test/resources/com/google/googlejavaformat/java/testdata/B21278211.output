@@ -13,6 +13,9 @@ class B21278211 {
         .g()
         .hzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz();
 
-    x.f().g().h().i();
+    x.f()
+        .g()
+        .h()
+        .i();
   }
 }
