@@ -12,6 +12,8 @@
 
   <change-notes><![CDATA[
     <dl>
+      <dt>1.8</dt>
+      <dd>Add breaks to call chains</dd>
       <dt>1.8-SNAPSHOT.0.3</dt>
       <dd>Configurable max line length.</dd>
       <dt>1.7.0.3</dt>
