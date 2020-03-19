@@ -18,10 +18,15 @@ import static com.google.common.collect.Iterables.getLast;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.DiscreteDomain;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Range;
+import com.google.googlejavaformat.Input.Tok;
+import com.google.googlejavaformat.Input.Token;
 import com.google.googlejavaformat.Output.BreakTag;
+import com.google.googlejavaformat.java.JavaInput;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -258,7 +263,7 @@ public abstract class Doc {
     @Override
     public State computeBreaks(CommentsHelper commentsHelper, int maxWidth, State state) {
       float thisWidth = getWidth();
-      if (state.column + thisWidth <= maxWidth) {
+      if (state.column + thisWidth <= maxWidth && isNoChain(this)) {
         oneLine = true;
         return state.withColumn(state.column + (int) thisWidth);
       }
@@ -266,6 +271,59 @@ public abstract class Doc {
           computeBroken(
               commentsHelper, maxWidth, new State(state.indent + plusIndent.eval(), state.column));
       return state.withColumn(broken.column);
+    }
+
+    private static boolean isNoChain(Level level) {
+      int lastIndex = level.docs.size() - 1;
+
+      for (int i = 0; i < level.docs.size(); i++) {
+        boolean isPrevBreak = isBreak(i > 0 ? level.docs.get(i - 1) : null);
+        boolean hasIndent = hasIndent(level.docs.get(i));
+        String originalText = getOriginalText(level.docs.get(i));
+        String nextText = getOriginalText(i < lastIndex ? level.docs.get(i + 1) : null);
+
+        boolean currentMatch = Optional.ofNullable(originalText)
+            .map("."::equals)
+            .orElse(false);
+
+        boolean nextMatch = Optional.ofNullable(nextText)
+            .map(next -> next.matches("^[A-z0-9]+$"))
+            .orElse(false);
+
+        if (isPrevBreak && hasIndent && currentMatch && nextMatch) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    private static String getOriginalText(Doc document) {
+      return Optional.ofNullable(document)
+          .filter(doc -> doc instanceof Token)
+          .map(doc -> (Token) doc)
+          .map(Token::getToken)
+          .map(Input.Token::getTok)
+          .map(Input.Tok::getOriginalText)
+          .orElse(null);
+    }
+
+    private static boolean isBreak(Doc document) {
+      return document instanceof Break;
+    }
+
+    private static boolean hasIndent(Doc document) {
+      return Optional.ofNullable(document)
+          .filter(doc -> doc instanceof Token)
+          .map(doc -> (Token) doc)
+          .map(Token::getToken)
+          .map(Input.Token::getToksBefore)
+          .filter(toks -> toks.size() == 1)
+          .map(List::iterator)
+          .map(Iterator::next)
+          .map(Input.Tok::getOriginalText)
+          .map(txt -> txt.matches("^\\s+$"))
+          .orElse(false);
     }
 
     private static void splitByBreaks(List<Doc> docs, List<List<Doc>> splits, List<Break> breaks) {
