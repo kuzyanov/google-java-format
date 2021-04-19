@@ -33,7 +33,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import java.text.NumberFormat;
-import javax.annotation.Nullable;
 import javax.swing.*;
 
 import org.jetbrains.annotations.Nls;

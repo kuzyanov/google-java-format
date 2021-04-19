@@ -132,7 +132,8 @@ public class FormatterIntegrationTest {
     try {
       Formatter formatter = new Formatter();
       String output = formatter.formatSource(input);
-      output = StringWrapper.wrap(output, formatter);
+      JavaFormatterOptions options = JavaFormatterOptions.builder().build();
+      output = StringWrapper.wrap(output, formatter, options);
       assertEquals("bad output for " + name, expected, output);
     } catch (FormatterException e) {
       fail(String.format("Formatter crashed on %s: %s", name, e.getMessage()));
