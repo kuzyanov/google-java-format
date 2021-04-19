@@ -25,13 +25,13 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.googlejavaformat.Newlines;
 import com.google.googlejavaformat.java.JavaFormatterOptions.Style;
 import com.google.googlejavaformat.java.JavaInput.Tok;
+import com.sun.tools.javac.parser.Tokens.TokenKind;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
-import org.openjdk.tools.javac.parser.Tokens.TokenKind;
 
 /** Orders imports in Java source code. */
 public class ImportOrderer {
@@ -345,6 +345,10 @@ public class ImportOrderer {
           trailing.append(tokenAt(i));
           i++;
         }
+      }
+      while (tokenAt(i).equals(";")) {
+        // Extra semicolons are not allowed by the JLS but are accepted by javac.
+        i++;
       }
       imports.add(new Import(importedName, trailing.toString(), isStatic));
       // Remember the position just after the import we just saw, before skipping blank lines.

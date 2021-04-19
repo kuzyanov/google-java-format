@@ -26,6 +26,21 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 import com.google.common.collect.TreeRangeMap;
 import com.google.googlejavaformat.Newlines;
+import com.sun.source.tree.BinaryTree;
+import com.sun.source.tree.LiteralTree;
+import com.sun.source.tree.MemberSelectTree;
+import com.sun.source.tree.Tree;
+import com.sun.source.tree.Tree.Kind;
+import com.sun.source.util.TreePath;
+import com.sun.source.util.TreePathScanner;
+import com.sun.tools.javac.file.JavacFileManager;
+import com.sun.tools.javac.parser.JavacParser;
+import com.sun.tools.javac.parser.ParserFactory;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.util.Log;
+import com.sun.tools.javac.util.Options;
+import com.sun.tools.javac.util.Position;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
@@ -37,27 +52,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
-import org.openjdk.javax.tools.Diagnostic;
-import org.openjdk.javax.tools.DiagnosticCollector;
-import org.openjdk.javax.tools.DiagnosticListener;
-import org.openjdk.javax.tools.JavaFileObject;
-import org.openjdk.javax.tools.SimpleJavaFileObject;
-import org.openjdk.javax.tools.StandardLocation;
-import org.openjdk.source.tree.BinaryTree;
-import org.openjdk.source.tree.LiteralTree;
-import org.openjdk.source.tree.MemberSelectTree;
-import org.openjdk.source.tree.Tree;
-import org.openjdk.source.tree.Tree.Kind;
-import org.openjdk.source.util.TreePath;
-import org.openjdk.source.util.TreePathScanner;
-import org.openjdk.tools.javac.file.JavacFileManager;
-import org.openjdk.tools.javac.parser.JavacParser;
-import org.openjdk.tools.javac.parser.ParserFactory;
-import org.openjdk.tools.javac.tree.JCTree;
-import org.openjdk.tools.javac.util.Context;
-import org.openjdk.tools.javac.util.Log;
-import org.openjdk.tools.javac.util.Options;
-import org.openjdk.tools.javac.util.Position;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.DiagnosticListener;
+import javax.tools.JavaFileObject;
+import javax.tools.SimpleJavaFileObject;
+import javax.tools.StandardLocation;
 
 /** Wraps string literals that exceed the column limit. */
 public final class StringWrapper {
@@ -239,9 +239,10 @@ public final class StringWrapper {
    * @param separator the line separator
    * @param columnLimit the number of columns to wrap at
    * @param startColumn the column position of the beginning of the original text
-   * @param trailing extra space to leave after the last line
-   * @param components the text to reflow
-   * @param first0 true if the text includes the beginning of its enclosing concat chain, i.e. a
+   * @param trailing extra space to leave after the last line, to accommodate a ; or )
+   * @param components the text to reflow. This is a list of “words” of a single literal. Its first
+   *     and last quotes have been stripped
+   * @param first0 true if the text includes the beginning of its enclosing concat chain
    */
   private static String reflow(
       String separator,
@@ -251,7 +252,7 @@ public final class StringWrapper {
       ImmutableList<String> components,
       boolean first0) {
     // We have space between the start column and the limit to output the first line.
-    // Reserve two spaces for the quotes.
+    // Reserve two spaces for the start and end quotes.
     int width = columnLimit - startColumn - 2;
     Deque<String> input = new ArrayDeque<>(components);
     List<String> lines = new ArrayList<>();
@@ -259,10 +260,13 @@ public final class StringWrapper {
     while (!input.isEmpty()) {
       int length = 0;
       List<String> line = new ArrayList<>();
-      if (input.stream().mapToInt(x -> x.length()).sum() <= width) {
+      // If we know this is going to be the last line, then remove a bit of width to account for the
+      // trailing characters.
+      if (input.stream().mapToInt(String::length).sum() <= width) {
+        // This isn’t quite optimal, but arguably good enough. See b/179561701
         width -= trailing;
       }
-      while (!input.isEmpty() && (length <= 4 || (length + input.peekFirst().length()) < width)) {
+      while (!input.isEmpty() && (length <= 4 || (length + input.peekFirst().length()) <= width)) {
         String text = input.removeFirst();
         line.add(text);
         length += text.length();
@@ -372,6 +376,7 @@ public final class StringWrapper {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     Context context = new Context();
     context.put(DiagnosticListener.class, diagnostics);
+    Options.instance(context).put("--enable-preview", "true");
     Options.instance(context).put("allowStringFolding", Boolean.toString(allowStringFolding));
     JCTree.JCCompilationUnit unit;
     JavacFileManager fileManager = new JavacFileManager(context, true, UTF_8);

@@ -18,16 +18,16 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.sun.tools.javac.parser.JavaTokenizer;
+import com.sun.tools.javac.parser.Scanner;
+import com.sun.tools.javac.parser.ScannerFactory;
+import com.sun.tools.javac.parser.Tokens.Comment;
+import com.sun.tools.javac.parser.Tokens.Comment.CommentStyle;
+import com.sun.tools.javac.parser.Tokens.Token;
+import com.sun.tools.javac.parser.Tokens.TokenKind;
+import com.sun.tools.javac.parser.UnicodeReader;
+import com.sun.tools.javac.util.Context;
 import java.util.Set;
-import org.openjdk.tools.javac.parser.JavaTokenizer;
-import org.openjdk.tools.javac.parser.Scanner;
-import org.openjdk.tools.javac.parser.ScannerFactory;
-import org.openjdk.tools.javac.parser.Tokens.Comment;
-import org.openjdk.tools.javac.parser.Tokens.Comment.CommentStyle;
-import org.openjdk.tools.javac.parser.Tokens.Token;
-import org.openjdk.tools.javac.parser.Tokens.TokenKind;
-import org.openjdk.tools.javac.parser.UnicodeReader;
-import org.openjdk.tools.javac.util.Context;
 
 /** A wrapper around javac's lexer. */
 class JavacTokens {
@@ -128,9 +128,27 @@ class JavacTokens {
 
     @Override
     protected Comment processComment(int pos, int endPos, CommentStyle style) {
-      char[] buf = reader.getRawCharacters(pos, endPos);
+      char[] buf = getRawCharactersReflectively(pos, endPos);
       return new CommentWithTextAndPosition(
           pos, endPos, new AccessibleReader(fac, buf, buf.length), style);
+    }
+
+    private char[] getRawCharactersReflectively(int beginIndex, int endIndex) {
+      Object instance;
+      try {
+        instance = JavaTokenizer.class.getDeclaredField("reader").get(this);
+      } catch (ReflectiveOperationException e) {
+        instance = this;
+      }
+      try {
+        return (char[])
+            instance
+                .getClass()
+                .getMethod("getRawCharacters", int.class, int.class)
+                .invoke(instance, beginIndex, endIndex);
+      } catch (ReflectiveOperationException e) {
+        throw new LinkageError(e.getMessage(), e);
+      }
     }
   }
 
