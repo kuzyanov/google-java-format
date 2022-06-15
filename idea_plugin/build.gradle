@@ -31,14 +31,14 @@ apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 
 intellij {
-  pluginName = "google-java-format"
-  version = "211.6693.65-EAP-SNAPSHOT"
+  pluginName = "kuzyanov_google-java-format"
+  version = "2021.1"
 }
 
 patchPluginXml {
   pluginDescription = "Formats source code using the google-java-format tool. This version of " +
                       "the plugin uses version ${googleJavaFormatVersion} of the tool."
-  version = "${googleJavaFormatVersion}.0"
+  version = "${googleJavaFormatVersion}.0.kuzyanov_${new Date().format('dd-MM-yyyy')}"
   sinceBuild = '201'
   untilBuild = ''
 }
@@ -55,5 +55,5 @@ sourceSets {
 }
 
 dependencies {
-  compile "com.google.googlejavaformat:google-java-format:${googleJavaFormatVersion}"
+  implementation "com.google.googlejavaformat:google-java-format:${googleJavaFormatVersion}"
 }

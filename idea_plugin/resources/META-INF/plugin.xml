@@ -14,11 +14,11 @@
   limitations under the License.
 -->
 
-<idea-plugin url="https://github.com/google/google-java-format/tree/master/idea_plugin" require-restart="true">
-  <id>google-java-format</id>
-  <name>google-java-format</name>
-  <vendor url="https://github.com/google/google-java-format">
-    Google
+<idea-plugin url="https://github.com/kuzyanov/google-java-format/tree/master/idea_plugin" require-restart="true">
+  <id>kuzyanov_google-java-format</id>
+  <name>kuzyanov_google-java-format</name>
+  <vendor url="https://github.com/kuzyanov/google-java-format">
+    kuzyanov
   </vendor>
 
   <!-- Mark it as available on all JetBrains IDEs. It's really only useful in
@@ -28,6 +28,12 @@
 
   <change-notes><![CDATA[
     <dl>
+      <dt>kuzyanov_15-06-2022</dt>
+      <dd>Disable auto-updates of the plugin.</dd>
+      <dt>kuzyanov_19-03-2020</dt>
+      <dd>Add breaks to call chains.</dd>
+      <dt>kuzyanov_17-12-2019</dt>
+      <dd>Configurable max line length.</dd>
       <dt>1.10.0.0</dt>
       <dd>Updated to use google-java-format 1.10.</dd>
       <dt>1.9.0.0</dt>
@@ -40,10 +46,6 @@
       <dd>Added a version for 2020.1+ IDEs.</dd>
       <dt>1.7.0.4</dt>
       <dd>Marked the plugin as being incompatible with 2020.1+ IDEs.</dd>
-      <dt>1.8</dt>
-      <dd>Add breaks to call chains</dd>
-      <dt>1.8-SNAPSHOT.0.3</dt>
-      <dd>Configurable max line length.</dd>
       <dt>1.7.0.3</dt>
       <dd>Fixed the plugin on 2019.3 IDEs.</dd>
       <dt>1.7.0.2</dt>
@@ -64,8 +66,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <projectConfigurable instance="com.google.googlejavaformat.intellij.GoogleJavaFormatConfigurable"
-                         id="google-java-format.settings"
-                         displayName="google-java-format Settings"/>
+                         id="kuzyanov_google-java-format.settings"
+                         displayName="kuzyanov_google-java-format Settings"/>
     <projectService serviceImplementation="com.google.googlejavaformat.intellij.GoogleJavaFormatSettings"/>
   </extensions>
 

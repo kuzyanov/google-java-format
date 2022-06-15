@@ -53,7 +53,7 @@ class GoogleJavaFormatConfigurable extends BaseConfigurable implements Searchabl
   @NotNull
   @Override
   public String getId() {
-    return "google-java-format.settings";
+    return "kuzyanov_google-java-format.settings";
   }
 
   @Nullable
@@ -65,7 +65,7 @@ class GoogleJavaFormatConfigurable extends BaseConfigurable implements Searchabl
   @Nls
   @Override
   public String getDisplayName() {
-    return "google-java-format Settings";
+    return "kuzyanov_google-java-format Settings";
   }
 
   @Nullable
