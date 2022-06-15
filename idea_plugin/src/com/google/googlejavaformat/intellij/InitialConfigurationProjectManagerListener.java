@@ -20,8 +20,10 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import org.jetbrains.annotations.NotNull;
 
 final class InitialConfigurationProjectManagerListener implements ProjectManagerListener {
@@ -37,7 +39,11 @@ final class InitialConfigurationProjectManagerListener implements ProjectManager
 
     if (settings.isUninitialized()) {
       settings.setEnabled(false);
+      settings.setMaxLineLength(140);
       displayNewUserNotification(project, settings);
+
+      // disable auto-updates of the plugin
+      UpdateChecker.getDisabledToUpdate().add(PluginId.getId("kuzyanov_google-java-format"));
     }
   }
 

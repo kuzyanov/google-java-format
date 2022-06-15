@@ -27,7 +27,7 @@ import java.util.Optional;
 
 @State(
     name = "GoogleJavaFormatSettings",
-    storages = {@Storage("google-java-format.xml")})
+    storages = {@Storage("kuzyanov_google-java-format.xml")})
 class GoogleJavaFormatSettings implements PersistentStateComponent<GoogleJavaFormatSettings.State> {
 
   private State state = new State();
