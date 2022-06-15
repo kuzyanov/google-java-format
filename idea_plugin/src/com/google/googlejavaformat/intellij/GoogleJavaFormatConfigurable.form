@@ -42,7 +42,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="100" noi18n="true"/>
+          <text value="140" noi18n="true"/>
         </properties>
       </component>
       <component id="3a8fe" class="javax.swing.JLabel">

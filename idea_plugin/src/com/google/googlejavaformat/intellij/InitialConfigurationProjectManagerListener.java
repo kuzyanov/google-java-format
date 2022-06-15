@@ -39,6 +39,7 @@ final class InitialConfigurationProjectManagerListener implements ProjectManager
 
     if (settings.isUninitialized()) {
       settings.setEnabled(false);
+      settings.setMaxLineLength(140);
       displayNewUserNotification(project, settings);
 
       // disable auto-updates of the plugin
