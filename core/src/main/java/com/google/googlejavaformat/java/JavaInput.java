@@ -49,6 +49,7 @@ import java.util.List;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.DiagnosticListener;
+import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.SimpleJavaFileObject;
@@ -311,7 +312,7 @@ public final class JavaInput extends Input {
     for (Tok tok : toks) {
       builder.put(tok.getPosition(), tok.getColumn());
     }
-    return builder.build();
+    return builder.buildOrThrow();
   }
 
   /**
@@ -349,7 +350,8 @@ public final class JavaInput extends Input {
     stopTokens = ImmutableSet.<TokenKind>builder().addAll(stopTokens).add(TokenKind.EOF).build();
     Context context = new Context();
     Options.instance(context).put("--enable-preview", "true");
-    new JavacFileManager(context, true, UTF_8);
+    JavaFileManager fileManager = new JavacFileManager(context, false, UTF_8);
+    context.put(JavaFileManager.class, fileManager);
     DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
     context.put(DiagnosticListener.class, diagnosticCollector);
     Log log = Log.instance(context);
@@ -557,33 +559,28 @@ public final class JavaInput extends Input {
   }
 
   /**
-   * Convert from an offset and length flag pair to a token range.
+   * Convert from a character range to a token range.
    *
-   * @param offset the {@code 0}-based offset in characters
-   * @param length the length in characters
+   * @param characterRange the {@code 0}-based {@link Range} of characters
    * @return the {@code 0}-based {@link Range} of tokens
-   * @throws FormatterException if offset + length is outside the file
+   * @throws FormatterException if the upper endpoint of the range is outside the file
    */
-  Range<Integer> characterRangeToTokenRange(int offset, int length) throws FormatterException {
-    int requiredLength = offset + length;
-    if (requiredLength > text.length()) {
+  Range<Integer> characterRangeToTokenRange(Range<Integer> characterRange)
+      throws FormatterException {
+    if (characterRange.upperEndpoint() > text.length()) {
       throw new FormatterException(
           String.format(
               "error: invalid length %d, offset + length (%d) is outside the file",
-              length, requiredLength));
+              characterRange.upperEndpoint() - characterRange.lowerEndpoint(),
+              characterRange.upperEndpoint()));
     }
-    if (length < 0) {
-      return EMPTY_RANGE;
-    }
-    if (length == 0) {
-      // 0 stands for "format the line under the cursor"
-      length = 1;
-    }
+    // empty range stands for "format the line under the cursor"
+    Range<Integer> nonEmptyRange =
+        characterRange.isEmpty()
+            ? Range.closedOpen(characterRange.lowerEndpoint(), characterRange.lowerEndpoint() + 1)
+            : characterRange;
     ImmutableCollection<Token> enclosed =
-        getPositionTokenMap()
-            .subRangeMap(Range.closedOpen(offset, offset + length))
-            .asMapOfRanges()
-            .values();
+        getPositionTokenMap().subRangeMap(nonEmptyRange).asMapOfRanges().values();
     if (enclosed.isEmpty()) {
       return EMPTY_RANGE;
     }
@@ -664,12 +661,9 @@ public final class JavaInput extends Input {
   public RangeSet<Integer> characterRangesToTokenRanges(Collection<Range<Integer>> characterRanges)
       throws FormatterException {
     RangeSet<Integer> tokenRangeSet = TreeRangeSet.create();
-    for (Range<Integer> characterRange0 : characterRanges) {
-      Range<Integer> characterRange = characterRange0.canonical(DiscreteDomain.integers());
+    for (Range<Integer> characterRange : characterRanges) {
       tokenRangeSet.add(
-          characterRangeToTokenRange(
-              characterRange.lowerEndpoint(),
-              characterRange.upperEndpoint() - characterRange.lowerEndpoint()));
+          characterRangeToTokenRange(characterRange.canonical(DiscreteDomain.integers())));
     }
     return tokenRangeSet;
   }

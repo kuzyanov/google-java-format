@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id "org.jetbrains.intellij" version "0.7.2"
+  id "org.jetbrains.intellij" version "1.4.0"
 }
 
 repositories {
@@ -24,23 +24,27 @@ repositories {
 }
 
 ext {
-  googleJavaFormatVersion = '1.10.0-SNAPSHOT'
+  googleJavaFormatVersion = "1.15.0-SNAPSHOT"
 }
 
-apply plugin: 'org.jetbrains.intellij'
-apply plugin: 'java'
+apply plugin: "org.jetbrains.intellij"
+apply plugin: "java"
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 intellij {
-  pluginName = "kuzyanov_google-java-format"
-  version = "2021.1"
+  pluginName = "google-java-format"
+  plugins = ["java"]
+  version = "221.3427-EAP-CANDIDATE-SNAPSHOT"
 }
 
 patchPluginXml {
   pluginDescription = "Formats source code using the google-java-format tool. This version of " +
                       "the plugin uses version ${googleJavaFormatVersion} of the tool."
-  version = "${googleJavaFormatVersion}.0.kuzyanov_${new Date().format('dd-MM-yyyy')}"
-  sinceBuild = '201'
-  untilBuild = ''
+  version.set("${googleJavaFormatVersion}.0.kuzyanov_${new Date().format('dd-MM-yyyy')}")
+  sinceBuild = "203"
+  untilBuild = ""
 }
 
 publishPlugin {
@@ -49,8 +53,8 @@ publishPlugin {
 
 sourceSets {
   main {
-    java.srcDir 'src'
-    resources.srcDir 'resources'
+    java.srcDir "src"
+    resources.srcDir "resources"
   }
 }
 

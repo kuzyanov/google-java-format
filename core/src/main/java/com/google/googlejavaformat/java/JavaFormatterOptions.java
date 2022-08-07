@@ -64,7 +64,7 @@ public class JavaFormatterOptions {
     return style.indentationMultiplier();
   }
 
-  boolean formatJavadoc() {
+  public boolean formatJavadoc() {
     return formatJavadoc;
   }
 
@@ -101,7 +101,7 @@ public class JavaFormatterOptions {
       return this;
     }
 
-    Builder formatJavadoc(boolean formatJavadoc) {
+    public Builder formatJavadoc(boolean formatJavadoc) {
       this.formatJavadoc = formatJavadoc;
       return this;
     }
