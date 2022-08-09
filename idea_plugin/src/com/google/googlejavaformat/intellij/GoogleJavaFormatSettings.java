@@ -23,6 +23,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 @State(
@@ -43,7 +44,7 @@ class GoogleJavaFormatSettings implements PersistentStateComponent<GoogleJavaFor
   }
 
   @Override
-  public void loadState(State state) {
+  public void loadState(@NotNull State state) {
     this.state = state;
   }
 
@@ -82,7 +83,7 @@ class GoogleJavaFormatSettings implements PersistentStateComponent<GoogleJavaFor
   enum EnabledState {
     UNKNOWN,
     ENABLED,
-    DISABLED;
+    DISABLED
   }
 
   static class State {
@@ -95,7 +96,7 @@ class GoogleJavaFormatSettings implements PersistentStateComponent<GoogleJavaFor
     public void setEnabled(@Nullable String enabledStr) {
       if (enabledStr == null) {
         enabled = EnabledState.UNKNOWN;
-      } else if (Boolean.valueOf(enabledStr)) {
+      } else if (Boolean.parseBoolean(enabledStr)) {
         enabled = EnabledState.ENABLED;
       } else {
         enabled = EnabledState.DISABLED;
