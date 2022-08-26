@@ -34,7 +34,7 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 intellij {
-  pluginName = "google-java-format"
+  pluginName = "kuzyanov_google-java-format"
   plugins = ["java"]
   version = "221.3427-EAP-CANDIDATE-SNAPSHOT"
 }
