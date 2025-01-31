@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.google.googlejavaformat</groupId>
     <artifactId>google-java-format-parent</artifactId>
-  <version>1.15.0.ECO</version>
+  <version>1.15.0.ECO.21</version>
   </parent>
 
   <artifactId>google-java-format</artifactId>
@@ -93,7 +93,7 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <source>11</source>
+          <source>${java.version}</source>
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
@@ -216,8 +216,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
     </plugins>
@@ -243,6 +243,19 @@
           <plugin>
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
+              <source>${java.version}</source>
+              <encoding>UTF-8</encoding>
+              <docencoding>UTF-8</docencoding>
+              <charset>UTF-8</charset>
+              <additionalJOptions>
+                <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED,com.google.googlejavaformat</additionalJOption>
+                <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED,com.google.googlejavaformat</additionalJOption>
+                <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED,com.google.googlejavaformat</additionalJOption>
+                <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED,com.google.googlejavaformat</additionalJOption>
+                <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED,com.google.googlejavaformat</additionalJOption>
+                <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED,com.google.googlejavaformat</additionalJOption>
+                <additionalJOption>--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED,com.google.googlejavaformat</additionalJOption>
+              </additionalJOptions>
               <excludePackageNames>com.google.googlejavaformat.java.java14</excludePackageNames>
             </configuration>
           </plugin>

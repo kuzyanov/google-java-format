@@ -24,7 +24,7 @@ repositories {
 }
 
 ext {
-  googleJavaFormatVersion = "1.15.0.ECO"
+  googleJavaFormatVersion = "1.15.0.ECO.21"
 }
 
 apply plugin: "org.jetbrains.intellij"
