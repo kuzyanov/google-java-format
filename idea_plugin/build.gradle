@@ -15,36 +15,36 @@
  */
 
 plugins {
-  id "org.jetbrains.intellij.platform" version "2.2.1"
+  id "org.jetbrains.intellij" version "1.17.3"
 }
 
 repositories {
   mavenCentral()
   mavenLocal()
-  intellijPlatform {
-    defaultRepositories()
-  }
 }
 
 ext {
-  googleJavaFormatVersion = "1.15.0.ECO.21"
+  googleJavaFormatVersion = "1.15.0.ECO.11"
 }
 
-apply plugin: "org.jetbrains.intellij.platform"
+apply plugin: "org.jetbrains.intellij"
 apply plugin: "java"
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
-intellijPlatform {
-  projectName = "kuzyanov_google-java-format"
+//idea("2022.1.4")
+intellij {
+  pluginName = "kuzyanov_google-java-format"
+  plugins = ["java"]
+  version = "221.6008.13"
 }
 
 patchPluginXml {
   pluginDescription = "Formats source code using the google-java-format tool. This version of " +
-                      "the plugin uses version ${googleJavaFormatVersion} of the tool."
-  version = "${googleJavaFormatVersion}.0.kuzyanov_${new Date().format('dd-MM-yyyy')}"
-  sinceBuild = "243"
+      "the plugin uses version ${googleJavaFormatVersion} of the tool."
+  version.set("${googleJavaFormatVersion}.0.kuzyanov_${new Date().format('dd-MM-yyyy')}")
+  sinceBuild = "221"
   untilBuild = ""
 }
 
@@ -60,9 +60,5 @@ sourceSets {
 }
 
 dependencies {
-  intellijPlatform {
-    intellijIdeaCommunity("2024.3")
-    bundledPlugin("com.intellij.java")
-  }
   implementation "com.google.googlejavaformat:google-java-format:${googleJavaFormatVersion}"
 }
